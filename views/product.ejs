@@ -2,18 +2,302 @@
 <html>
 <head>
     <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        img {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+            width: 150px;
+        }
+    </style>
 </head>
 <body>
 <%- include('partials/nav.ejs') %>
-<main class="container">
 
-</main>
+<section class="p-2" style="background-color: #eee">
+    <div class="container">
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col">
+                <div class="card rounded-3">
+                    <div class="card-body">
+                        <h4 class="text-center">Product</h4>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+                        <form
+                                class="row row-cols-lg-auto g-3 justify-content-center align-items-center mb-4 pb-2"
+                        >
+                            <div class="col-12">
+                                <div class="form-outline">
+                                    <input type="hidden" id="formId" name="id"/>
+                                    <label for="name">Name</label>
+                                    <input
+                                            type="text"
+                                            id="name"
+                                            class="form-control"
+                                    />
+                                    <label for="price">Price</label>
+                                    <input
+                                            type="number"
+                                            id="price"
+                                            class="form-control"
+                                    />
+                                    <label for="unit">Unit</label>
+                                    <input
+                                            type="text"
+                                            id="unit"
+                                            class="form-control"
+                                    />
+                                    <label for="quantity">Quantity</label>
+                                    <input
+                                            type="number"
+                                            id="quantity"
+                                            class="form-control"
+                                    />
+
+                                    <label for="description">Description</label>
+                                    <textarea
+                                            id="description"
+                                            class="form-control"
+                                            rows="3"
+                                    ></textarea>
+                                    <label for="image">Image</label>
+                                    <input
+                                            type="text"
+                                            id="image"
+                                            class="form-control"
+                                    />
+                                    <select id="category" class="form-select form-select-lg"
+                                            aria-label=".form-select-lg example">
+                                        <option selected>Category</option>
+                                        <% for (item of category) { %>
+                                            <option value="<%= item.id %>"><%= item.name %></option>
+                                        <% } %>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <button type="submit" id="submitId" class="btn btn-primary">
+                                    Save
+                                </button>
+                            </div>
+                        </form>
+
+                        <table class="table mb-4" id="tableCategory">
+                            <thead>
+                            <tr>
+                                <th scope="col">Id</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Unit</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Image</th>
+                            </tr>
+                            </thead>
+                            <tbody id="dataTbody">
+                            <% for (item of data) { %>
+
+                                <tr>
+                                    <th scope="row"><%= item.id %></th>
+                                    <td><%= item.name %></td>
+                                    <td><%= item.price %></td>
+                                    <td><%= item.unit %></td>
+                                    <td><%= item.quantity %></td>
+                                    <td><%= item.category %></td>
+                                    <td><%= item.description %></td>
+                                    <td><img style="width:150px" src="<%= item.image %>" alt="<%= item.name %>"></td>
+                                    <td>
+                                        <button
+                                                type="submit"
+                                                class="btn btn-success ms-1 button-edit"
+                                                data-id="<%= item.id %>"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                                type="submit"
+                                                class="btn btn-danger button-delete"
+                                                data-id="<%= item.id %>"
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+
+                            <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    function removeData() {
+        $("#name").val("");
+        $("#price").val("");
+        $("#unit").val("");
+        $("#quantity").val("");
+        $("#description").val("");
+        $("#image").val("");
+        return true;
+    }
+    function getBookById(id) {
+        $.ajax({
+            url: "/product/" + id,
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                $("#name").val(data.data.name);
+                $("#unit").val(data.data.unit).change();
+
+                $("#price").val(data.data.price);
+                $("#quantity").val(data.data.quantity);
+                $("#category").val(data.data.category).change();
+
+                $("#description").val(data.data.description);
+                $("#image").val(data.data.image);
+            }
+        });
+    }
+    $(document).on("click", "#submitId", function (e) {
+        e.preventDefault();
+        var name = $("#name").val();
+        var unit = $("#unit").val();
+        var price = $("#price").val();
+        var quantity = $("#quantity").val();
+        var category = $("#category").val();
+        var description = $("#description").val();
+        var image = $("#image").val();
+
+        const nameButton = e.target.outerText;
+        if (nameButton === "Save") {
+            $.ajax({
+                url: "/product",
+                type: "POST",
+                data: {
+                    name: name,
+                    unit: unit,
+                    price: price,
+                    quantity:  quantity,
+                    category: category,
+                    description: description,
+                    image: image
+                },
+                success: function (data) {
+                    if (data.status === "success") {
+                        getData();
+                        removeData()
+                    }
+                }
+            });
+        } else if (nameButton === "Update") {
+            var id = $("#formId").val();
+            $.ajax({
+                url: "/product/" + id,
+                type: "PUT",
+                data: {
+                    name: name,
+                    unit: unit,
+                    price: price,
+                    quantity: quantity,
+                    category: category,
+                    description: description,
+                    image: image
+
+                },
+                success: function (data) {
+                    if (data.status === "success") {
+                        $("#submitId").text("Save");
+                        removeData()
+                        getData();
+                    }
+                }
+            });
+        }
+    });
+    $(document).on(
+        "click",
+        "#tableCategory tbody tr td button.button-edit",
+        function () {
+            const id = $(this).data("id");
+            $("#formId").val(id);
+            getBookById(id);
+            $("#submitId").text("Update");
+        }
+    );
+    $(document).on(
+        "click",
+        "#tableCategory tbody tr td button.button-delete",
+        function () {
+            const id = $(this).data("id");
+            $.ajax({
+                url: `/product/${id}`,
+                type: "DELETE",
+                success: function (result) {
+                    getData();
+                },
+            });
+        }
+    );
+
+    function getData() {
+        $.ajax({
+            url: "/product/all",
+            type: "GET",
+            success: function (data) {
+                showData(data?.data);
+            }
+        });
+    }
+
+    function showData(data) {
+        $('#dataTbody').remove();
+        $('#tableCategory').append(`<tbody id="dataTbody"></tbody>`);
+        data.forEach((val, key) => {
+            $('#tableCategory').find('tbody').append(`<tr>
+                                    <th scope="row">${val.id}</th>
+                   <td>${val?.name}</td>
+                  <td>${val?.price}</td>
+                  <td>${val?.unit}</td>
+                  <td>${val?.quantity}</td>
+                  <td>${val?.category}</td>
+                  <td>${val?.description}</td>
+                  <td>${val?.image}</td>
+                  <td><img style="width:150px" src="${val?.image}" alt="${val?.name}"></td>
+
+                                    <td>
+                                        <button
+                                                type="submit"
+                                                class="btn btn-success ms-1 button-edit"
+                                                data-name="${val?.name}"
+                                                data-id="${val.id}"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                                type="submit"
+                                                class="btn btn-danger button-delete"
+                                                data-id="${val.id}"
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+    `);
+        })
+    }
+</script>
+<%- include('partials/script.ejs') %>
 
 </body>
 </html>

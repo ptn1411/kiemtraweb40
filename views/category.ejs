@@ -73,6 +73,9 @@
                                         >
                                             Delete
                                         </button>
+                                        <a class="btn btn-info" href="ctp/<%= item.id %>">
+                                            Product
+                                        </a>
                                     </td>
                                 </tr>
 
@@ -185,11 +188,16 @@
                                         >
                                             Delete
                                         </button>
+       <a class="btn btn-info" href="ctp/${val.id}">
+                                            Product
+                                        </a>
                                     </td>
                                 </tr>
     `);
         })
     }
 </script>
+<%- include('partials/script.ejs') %>
+
 </body>
 </html>

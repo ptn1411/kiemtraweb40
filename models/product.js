@@ -1,9 +1,9 @@
 const db = require("./config");
-db.run("CREATE TABLE IF NOT EXISTS `products` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `price` INTEGER,`unit` TEXT, `category` TEXT,`description` TEXT, `image` TEXT)");
+db.run("CREATE TABLE IF NOT EXISTS `products` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `price` INTEGER,`quantity` TEXT,`unit` TEXT, `category` TEXT,`description` TEXT, `image` TEXT)");
 
-let create = (name, price, unit, category, description, image) => {
+let create = (name, price,quantity, unit, category, description, image) => {
     return new Promise((resolve, reject) => {
-        db.run(`INSERT INTO products (name, price, unit, category, description, image) VALUES (?, ?, ?, ?, ?, ?)`, [name, price, unit, category, description, image], (err) => {
+        db.run('INSERT INTO products (name, price,quantity, unit, category, description, image) VALUES (?,?, ?, ?, ?, ?, ?)', [name, price,quantity, unit, category, description, image], (err) => {
             if (err) {
                 reject(err);
             } else {
@@ -22,7 +22,7 @@ let create = (name, price, unit, category, description, image) => {
 };
 let getAll = () => {
     return new Promise((resolve, reject) => {
-        db.all(`SELECT * FROM products`, (err, rows) => {
+        db.all("SELECT * FROM products", (err, rows) => {
             if (err) {
                 reject(err);
             } else {
@@ -38,7 +38,7 @@ let getAll = () => {
 
 let getById = (id) => {
     return new Promise((resolve, reject) => {
-        db.get(`SELECT * FROM products WHERE id = ?`, [id], (err, row) => {
+        db.get("SELECT * FROM products WHERE id = ?", [id], (err, row) => {
             if (err) {
                 reject(err);
             } else {
@@ -47,9 +47,9 @@ let getById = (id) => {
         });
     });
 };
-let updateById = (id, name, price, unit, category, description, image) => {
+let updateById = (id, name, price,quantity, unit, category, description, image) => {
     return new Promise((resolve, reject) => {
-        db.run(`UPDATE products SET name = ?, price = ?, unit = ?, category = ?, description = ?, image = ? WHERE id = ?`, [name, price, unit, category, description, image, id], (err) => {
+        db.run("UPDATE products SET name = ?, price = ?,quantity=?, unit = ?, category = ?, description = ?, image = ? WHERE id = ?", [name, price,quantity, unit, category, description, image, id], (err) => {
             if (err) {
                 reject(err);
             } else {
@@ -57,6 +57,7 @@ let updateById = (id, name, price, unit, category, description, image) => {
                     id: id,
                     name: name,
                     price: price,
+                    quantity:quantity,
                     unit: unit,
                     category: category,
                     description: description,
@@ -68,7 +69,7 @@ let updateById = (id, name, price, unit, category, description, image) => {
 };
 let deleteById = (id) => {
     return new Promise((resolve, reject) => {
-        db.run(`DELETE FROM products WHERE id = ?`, [id], (err) => {
+        db.run("DELETE FROM products WHERE id = ?", [id], (err) => {
             if (err) {
                 reject(err);
             } else {

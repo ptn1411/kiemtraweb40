@@ -44,7 +44,8 @@ router.put("/:id", async (req, res) => {
     return res.json({
         status: "success",
         message: "Update category success"
-    });});
+    });
+});
 
 router.delete("/:id", async (req, res) => {
     await deteleCategory(req.params.id);
