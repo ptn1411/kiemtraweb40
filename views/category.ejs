@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+</head>
+<body>
+<%- include('partials/nav.ejs') %>
+
+<section class="p-2" style="background-color: #eee">
+    <div class="container py-5">
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col col-lg-9 col-xl-7">
+                <div class="card rounded-3">
+                    <div class="card-body p-4">
+                        <h4 class="text-center my-3 pb-3">Category</h4>
+
+                        <form
+                                class="row row-cols-lg-auto g-3 justify-content-center align-items-center mb-4 pb-2"
+                        >
+                            <div class="col-12">
+                                <div class="form-outline">
+                                    <input
+                                            type="text"
+                                            id="form1"
+                                            name="name"
+                                            class="form-control"
+                                    />
+                                    <input type="hidden" id="formId" name="id"/>
+                                    <label class="form-label" for="form1"
+                                    >Enter a name here</label
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <button type="submit" id="submitId" class="btn btn-primary">
+                                    Save
+                                </button>
+                            </div>
+                        </form>
+
+                        <table class="table mb-4" id="tableCategory">
+                            <thead>
+                            <tr>
+                                <th scope="col">Id</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody id="dataTbody">
+                            <% for (item of data) { %>
+
+                                <tr>
+                                    <th scope="row"><%= item.id %></th>
+                                    <td><%= item.name %></td>
+                                    <td>
+                                        <button
+                                                type="submit"
+                                                class="btn btn-success ms-1 button-edit"
+                                                data-name="<%= item.name %>"
+                                                data-id="<%= item.id %>"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                                type="submit"
+                                                class="btn btn-danger button-delete"
+                                                data-id="<%= item.id %>"
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+
+                            <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).on("click", "#submitId", function (e) {
+        e.preventDefault();
+        var name = $("#form1").val();
+        const nameButton =e.target.outerText;
+        if (nameButton==="Save"){
+            $.ajax({
+                url: "/category",
+                type: "POST",
+                data: {
+                    name: name
+                },
+                success: function (data) {
+                    if (data.status === "success"){
+                        $("#form1").val("")
+                        getData();
+                    }
+                }
+            });
+        }else if (nameButton==="Update"){
+            var id = $("#formId").val();
+            $.ajax({
+                url: "/category/" + id,
+                type: "PUT",
+                data: {
+                    name: name
+                },
+                success: function (data) {
+                    if (data.status === "success") {
+                        $("#submitId").text("Save");
+                        $("#form1").val("")
+                        getData();
+                    }
+                }
+            });
+        }
+    });
+    $(document).on(
+        "click",
+        "#tableCategory tbody tr td button.button-edit",
+        function () {
+            const name = $(this).data("name");
+            const id = $(this).data("id");
+            $("#form1").val(name);
+            $("#formId").val(id);
+            $("#submitId").text("Update");
+        }
+    );
+    $(document).on(
+        "click",
+        "#tableCategory tbody tr td button.button-delete",
+        function () {
+            const id = $(this).data("id");
+            $.ajax({
+                url: `category/${id}`,
+                type: "DELETE",
+                success: function (result) {
+                    getData();
+                },
+            });
+        }
+    );
+
+    function getData() {
+        $.ajax({
+            url: "/category/all",
+            type: "GET",
+            success: function (data) {
+                showData(data?.data);
+            }
+        });
+    }
+
+    function showData(data) {
+        $('#dataTbody').remove();
+        $('#tableCategory').append(`<tbody id="dataTbody"></tbody>`);
+        data.forEach((val, key) => {
+            $('#tableCategory').find('tbody').append(`<tr>
+                                    <th scope="row">${val.id}</th>
+                                    <td>${val?.name}</td>
+                                    <td>
+                                        <button
+                                                type="submit"
+                                                class="btn btn-success ms-1 button-edit"
+                                                data-name="${val?.name}"
+                                                data-id="${val.id}"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                                type="submit"
+                                                class="btn btn-danger button-delete"
+                                                data-id="${val.id}"
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+    `);
+        })
+    }
+</script>
+</body>
+</html>
