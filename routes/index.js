@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var {getAll,getById}  = require('../models/product');
+var {getAll,getProductByCategory,getById}  = require('../models/product');
 var {getCategoryById}  = require('../models/category');
 /* GET home page. */
 router.get('/',  async function (req, res, next) {
@@ -17,7 +17,7 @@ category ? data.category = category[0].name : data.category = 'No category';
 });
 
 router.get('/ctp/:id', async function (req, res, next) {
-  return res.render('categorytoproduct', { title: 'Category To Product',data:await getAll() });
+  return res.render('categorytoproduct', { title: 'Category To Product',data:await getProductByCategory(req.params.id) });
 });
 
 module.exports = router;

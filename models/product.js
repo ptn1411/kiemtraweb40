@@ -80,6 +80,21 @@ let deleteById = (id) => {
         });
     });
 };
+let getProductByCategory = (category) => {
+    return new Promise((resolve, reject) => {
+        db.all("SELECT * FROM products WHERE category = ?", [category], (err, rows) => {
+            if (err) {
+                reject(err);
+            } else {
+                const list = [];
+                rows.forEach(function (row) {
+                    list.push(row);
+                });
+                resolve(list);
+            }
+        });
+    });
+};
 module.exports ={
-    create,getAll,getById,updateById,deleteById
+    create,getAll,getById,updateById,deleteById,getProductByCategory
 }
